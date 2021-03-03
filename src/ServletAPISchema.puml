@@ -1,0 +1,102 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+package ServletClasses <<Rectangle>> {
+    interface Servlet {
+        + init(ServletConfig config)
+        + ServletConfig getServletConfig()
+        + service(ServletRequest req, ServletResponse res)
+        + String getServletInfo()
+        + deploy()
+    }
+
+    abstract class GenericServlet{
+        - ServletConfig config
+        + ServletContext getServletContext()
+        + service(ServletRequest req, ServletResponse res)
+    }
+
+    abstract class HttpServlet{
+        # doGet(HttpServletRequest req, HttpServletResponse resp)
+        # doPost(HttpServletRequest req, HttpServletResponse resp)
+        # doHead(HttpServletRequest req, HttpServletResponse resp)
+        # doPut(HttpServletRequest req, HttpServletResponse resp)
+        # doDelete(HttpServletRequest req, HttpServletResponse resp)
+        # doOptions(HttpServletRequest req, HttpServletResponse resp)
+        # doTrace(HttpServletRequest req, HttpServletResponse resp)
+    }
+}
+
+    interface ServletRequest{
+        + Object getAttribute(String name)
+        + setAttribute(String name, Object o)
+        + removeAttribute(String name)
+
+        + ServletInputStream getInputStream()
+        + BufferedReader getReader()
+    }
+
+    interface ServletResponse{
+        + Object getAttribute(String name)
+        + setAttribute (String name, Object o)
+        + removeAttribute (String name)
+
+        + ServletOutputStream getOutputStream()
+        + BufferedReader getWriter()
+    }
+
+    interface ServletConfig{
+        + String getServletName()
+        + ServletContext getServletContext()
+        + String getInitParameter(String name)
+        + Enumeration<String> getInitParameterNames()
+    }
+
+    interface ServletContext{
+        + String getContextPath()
+        + RequestDispatcher getRequestDispatcher(String path)
+        + String getInitParameter(String name)
+        + Object getAttribute(String name)
+        + setAttribute(String name, Object o)
+        + removeAttribute(String name)
+    }
+
+    interface HttpServletRequest{
+            + Cookie[] getCookies()
+            + String getHeader(String name)
+            + String getMethod()
+            + HttpSession getSession()
+
+            + String getContextPath()
+            + String getPathInfo()
+            + String getQueryString()
+        }
+
+    interface HttpServletResponse{
+        + addCookie(Cookie cookie)
+        + String addHeader(String name, String value)
+
+        + sendRedirect(String name)
+        + setStatus(Int httpStatus)
+    }
+
+    interface RequestDispatcher{
+        + forward(ServletRequest request, ServletResponse response)
+        + include(ServletRequest request, ServletResponse response)
+    }
+
+Servlet <|.. GenericServlet
+GenericServlet <|.. HttpServlet
+HttpServlet <.. HttpServletResponse : use
+HttpServlet <.. HttpServletRequest : use
+
+Servlet <.. ServletConfig : use
+ServletConfig <.. ServletContext : use
+ServletContext <.. RequestDispatcher : use
+
+Servlet <.. ServletResponse : use
+ServletResponse <|-- HttpServletResponse
+
+Servlet <.. ServletRequest : use
+ServletRequest <|-- HttpServletRequest
+@enduml
